@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1=title
+  h2 ID : #{bookinstance_detail.id}
+  p #[strong Title : ]
+    a(href=bookinstance_detail.book.url) #{bookinstance_detail.book.title}
+  p #[strong Imprint : ] #{bookinstance_detail.imprint}
+  p #[strong Status : ] #{bookinstance_detail.status}
+  if bookinstance_detail.status=="Maintenance" || bookinstance_detail.status=="Loaned"
+    p #[strong Due : ] #{bookinstance_detail.due_back_formatted}
+  p Do you really want too delete the book instance ?
+  form(action="", method="post")
+    input(type="hidden", name="biid",value=bookinstance_detail.id)
+    input(type="submit", value="Delete")

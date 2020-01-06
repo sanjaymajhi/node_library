@@ -1,0 +1,46 @@
+extends layout
+
+block content
+
+  h1=title
+  form(action="",method="post")
+    label(for="book") Book : 
+    if update==1
+      input#book(type="text",name="book",value=book._id,readonly="readonly")
+    else if update==2
+      input#book(type="text",name="book",value=book)
+    else
+      select#book(name="book")
+        if bookinstance==undefined
+          option(value="" selected disabled) Select Book
+        each book in books
+          if bookinstance
+            option(value=book._id,selected=(bookinstance.book===book._id.toString()?"selected":false)) #{book.title}
+          else  
+            option(value=book._id) #{book.title}
+    br 
+    br
+    label(for="imprint") Imprint : 
+    input#imprint(type="text",name="imprint",value=(bookinstance==undefined?"":bookinstance.imprint),readonly=(update==1 || update==2 ? "readonly":false))
+    br
+    br
+    label(for="status") Status : 
+    select#status(name="status")
+      if bookinstance==undefined
+        option(value="" disabled selected) Select Status
+      option(value="Maintenance",selected=(bookinstance==undefined?"":bookinstance.status=="Maintenance"?"selected":false)) Maintenance
+      option(value="Available",selected=(bookinstance==undefined?"":bookinstance.status=="Available"?"selected":false)) Available
+      option(value="Loaned",selected=(bookinstance==undefined?"":bookinstance.status=="Loaned"?"selected":false)) Loaned
+      option(value="Reserved",selected=(bookinstance==undefined?"":bookinstance.status=="Reserved"?"selected":false)) Reserved
+    br
+    br
+    label(for="due_back") Due Back : 
+    input#due_back(type="Date",name="due_back",value=(bookinstance==undefined ?"": bookinstance.status=="Available"?"":bookinstance.due_back_formatted))
+    br
+    br
+    input(type="submit", value="Save") 
+  if(errors)
+    h1 Errors : 
+    ul
+      each error in errors
+        li=error.msg

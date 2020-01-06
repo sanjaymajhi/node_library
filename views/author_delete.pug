@@ -1,0 +1,19 @@
+extends layout
+
+block content
+
+  h1 #[strong Author : ] #{author.name}
+  p=author.lifespan
+
+  h2 Books
+  if books.length
+    p First delete these books to delete the author.
+  ul
+    each book in books
+      li
+        a(href=book.url) #{book.title}
+    else
+      p Do you really want to delete the author ? 
+      form(action="",method="post")
+        input(type="hidden", name="aid",value=author._id)
+        input(type="submit", value="Delete")

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1=title
+  form(action="", method="post")
+    label(for="name") Name :
+    input#name(type='text', placeholder='Fantasy, Poetry etc.' name='name' value=(undefined===genre ? '' : genre.name))
+    input(type="submit")
+    if errors
+      p Errors :
+      ul 
+        each error in errors
+          li=error.msg

@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1=title
+  h2=book.title
+
+  p #[strong Author : ]
+    a(href=book.author.url) #{book.author.name} 
+  p #[strong Summary :] #{book.summary}
+  p #[strong ISBN : ] #{book.isbn}
+  p #[strong Genre : ]
+    each gen in book.genre
+      a(href=gen.url) #{gen.name+", "}
+  if bookinstances.length
+    h1 #[strong First delete these book instances to delete the book]
+    h2 Copies
+    hr
+    each ins in bookinstances
+      p #[strong #{ins.status}]
+      p Imprint : #{ins.imprint}
+      p Due : #{ins.due_back_formatted}
+      p ID : 
+        a(href=ins.url) #{ins.id}
+      hr
+  else
+    p Do you really want to delete the book ?
+    form(action="", method="post")
+      input(type="hidden", name="bid",value=book._id)
+      input(type="submit", value="Delete")

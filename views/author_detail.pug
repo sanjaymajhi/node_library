@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+  h1 #[strong Author : ] #{author.name}
+  p=author.lifespan
+
+  h2 Books
+  ul
+    each book in books
+      li
+        a(href=book.url) #{book.title}
+        p=book.summary
+    else
+      p No books found.
+  button
+    a(href=author.url+"/delete") Delete Author
+  br 
+  br
+  button
+    a(href=author.url+"/update") Update Author

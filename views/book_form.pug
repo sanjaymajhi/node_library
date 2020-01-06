@@ -1,0 +1,43 @@
+extends layout
+
+block content
+
+  h1=title
+  form(action="",method="post")
+    label(for="title") Title :
+    input#title(type="text",name="title",required="true",value=(book===undefined?"":book.title))
+    br
+    br
+    label(for="author") Author :
+    select#author(type="select",name="author",placeholder="Select Author")
+      if(book==undefined)
+        option(selected,disabled) Select Author
+      each author in authors
+        if book
+          option(value=author._id,selected=(book.author._id==author._id.toString() || book.author==author._id.toString() ?"selected":false)) #{author.name}
+        else
+          option(value=author._id) #{author.name}
+    br
+    br
+    label Genres :
+      div 
+        each genre in genres
+          input#genre._id(type="checkbox", name="genre",value=genre._id,checked=genre[checked])
+          label(for=genre._id) &nbsp; #{genre.name}  &nbsp;&nbsp;&nbsp;
+    br
+    br
+    label(for="summary") Summary :
+    textarea#summary(type="summary",name="summary", cols="30", rows="10") #{book==undefined?"":book.summary}
+    br
+    br
+    label(for="isbn") ISBN :
+    input#isbn(type="text",name="isbn",value=(book==undefined?"":book.isbn))
+    br
+    br
+    input(type="submit", value="Save")
+  
+  if(errors)
+    h2 Errors : 
+    ul
+      each error in errors
+        li=error.msg

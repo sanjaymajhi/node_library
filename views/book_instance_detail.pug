@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  h1 ID : #{detail.id}
+  p #[strong Title : ]
+    a(href=detail.book.url) #{detail.book.title}
+  p #[strong Imprint : ] #{detail.imprint}
+  p #[strong Status : ] #{detail.status}
+  if detail.status=="Maintenance" || detail.status=="Loaned"
+    p #[strong Due : ] #{detail.due_back_formatted}
+  button
+    a(href=detail.url+"/delete") Delete Bookinsatance
+  button
+    a(href=detail.url+"/update") Update Bookinsatance

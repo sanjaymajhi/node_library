@@ -1,0 +1,29 @@
+extends layout
+
+block content
+
+  h1=title
+  form(action="",method="post")
+    label(for="f_name") First Name :  
+    input#f_name(type="text",name="first_name",value=(author==undefined?'':author.first_name))
+    br
+    br
+    label(for="l_name") Last Name :   
+    input#l_name(type="text",name="family_name",value=(author==undefined?'':author.family_name))
+    br
+    br
+    label(for="dob") Date of Birth :  
+    input#dob(type="Date",name="date_of_birth",value=(author==undefined?'':err==1 ? author.date_of_birth:author.dob))
+    br
+    br
+    label(for="dod") Date of Death :  
+    input#dod(type="Date",name="date_of_death",value=(author==undefined?'':err==1 ? author.date_of_death:author.dod))
+    br
+    br
+    input(type="submit", value="Save")
+  
+  if(errors)
+    h2 Errors : 
+    ul
+      each error in errors
+        li=error.msg
