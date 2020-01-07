@@ -1,0 +1,22 @@
+#main{
+    position: absolute;
+    top:30vh;
+    height:100vh;
+    width:100%;
+    text-align: center;
+    color:white;
+}
+
+body{
+    background-image: linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,1)),url("../images/home.jpg");
+}
+
+.button a{
+    text-decoration: none;
+    color: black;
+}
+
+.button{
+    margin:20px;
+    padding : 10px;
+}

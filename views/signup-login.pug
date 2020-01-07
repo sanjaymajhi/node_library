@@ -1,0 +1,63 @@
+doctype
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name="viewport",content="width=device-width,initial-scale=1")
+    title Signup or Login
+  body
+    form(action="/users/signup", method="post")
+      h1 Sign Up Form
+      label(for="name") Name : 
+      input#name(type="text", name="name")
+      br
+      br
+      label(for="email") Email : 
+      input#email(type="email", name="email")
+      br
+      br
+      label(for="mobile") Mobile : 
+      input#mobile(type="number", name="mobile")
+      br
+      br
+      label(for="password") Password : 
+      input#password(type="password", name="password")
+      br
+      br
+      input(type="submit", value="Sign Up")
+    
+    if usererror==1
+      h1 Errors :
+      h2 User Already Exists
+    if saveerror==1
+      h1 Errors :
+      h2 Save Error
+    if signup_errors
+      h1 Errors :
+      ul
+        each error in signup_errors
+          li=error.msg
+
+    form(action="/users/login", method="post")
+      h1 Login Form
+      label(for="email") Email : 
+      input#email(type="email", name="email")
+      br
+      br
+      label(for="password") Password : 
+      input#password(type="password", name="password")
+      br
+      br
+      input(type="submit", value="Sign Up")
+    
+    if usererror==1
+      h1 Errors :
+      h2 User Already Exists
+    if saveerror==1
+      h1 Errors :
+      h2 Save Error
+    if login_errors
+      h1 Errors :
+      ul
+        each error in login_errors
+          li=error.msg
+      
