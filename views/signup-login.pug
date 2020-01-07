@@ -53,12 +53,12 @@ html(lang='en')
           br
           input(type="submit", value="Sign Up")
         
-        if usererror==1
+        if usererror_l==1
           h1 Errors :
-          h2 User Already Exists
-        if saveerror==1
+          h2 User Not Exists
+        if matcherror==1
           h1 Errors :
-          h2 Save Error
+          h2 Incorrect Password
         if login_errors
           h1 Errors :
           ul

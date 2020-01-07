@@ -25,7 +25,8 @@ exports.signupController=[
         }
 
         var user=await User.find({email:req.body.email})
-        if(user){
+        if(user.length){
+            console.log(user)
             res.render("signup-login",{usererror:1})
             return;
         };
@@ -56,6 +57,41 @@ exports.signupController=[
 
 ];
 
-exports.loginController=function(req,res){
-    res.send("login ok");
-};
+exports.loginController=[
+    
+    validator.body("email","Invalid Email").isEmail(),
+    validator.body("password").isLength({min:8}),
+
+    async (req,res)=>{
+
+        const errors=validator.validationResult(req);
+
+        if(!errors.isEmpty()){
+            res.render("signup-login",{login_errors:errors.array()});
+            return;
+        }
+
+        var user=await User.findOne({email:req.body.email});
+        if(!user){
+            res.render("signup-login",{usererror_l:1});
+            return;
+        }
+        const isMatch=await bcrypt.compare(req.body.password,user.password);
+        if(!isMatch){
+            res.render("signup-login",{matcherror:1});
+            return;
+        }
+
+        var payload={
+            user:{
+                id:user._id
+            }
+        }
+
+        jwt.sign(payload,"secret",{expiresIn:3600},(err,token)=>{
+            if(err){throw err}
+            res.status(200).json({token})
+        })
+
+    }
+]
