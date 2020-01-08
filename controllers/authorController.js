@@ -3,6 +3,8 @@ var book=require("../models/book");
 var async=require("async");
 var validator=require("express-validator");
 
+var logged_user=require("../logged_user");
+
 exports.author_detail=function(req,res){
     async.parallel({
         author_detail:(callback)=>{
@@ -19,14 +21,14 @@ exports.author_detail=function(req,res){
             err.status=404;
             return next(err);
         }
-        res.render("author_detail",{author:results.author_detail,books:results.books});
+        res.render("author_detail",{author:results.author_detail,books:results.books,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 
 exports.author_list=function(req,res){
     author.find().sort([["family_name","Ascending"]])
     .exec((err,list)=>{
-        res.render("author_list",{title:"Author List Page",errors:err,authors:list});
+        res.render("author_list",{title:"Author List Page",errors:err,authors:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 

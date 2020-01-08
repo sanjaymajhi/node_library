@@ -7,6 +7,8 @@ var async=require("async");
 
 var validator=require("express-validator");
 
+var logged_user=require("../logged_user");
+
 exports.index=function(req,res){
     async.parallel({
         bookCount:function(callback){
@@ -26,14 +28,14 @@ exports.index=function(req,res){
         }
     },
     function(err,results){
-        res.render("index",{title:"Library Home Page",errors:err,data:results});
+        res.render("index",{title:"Library Home Page",errors:err,data:results,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 
 exports.book_list=function(req,res){
     book.find({},"title author").populate("author")
     .exec(function(err,list){
-        res.render("book_list",{title:"Book List",errors:err,books:list});
+        res.render("book_list",{title:"Book List",errors:err,books:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     })
 };
 
@@ -54,7 +56,7 @@ exports.book_detail=function(req,res,next){
             err.status=404;
             return next(err);
         }
-        res.render("book_detail",{book:results.book,bookins:results.book_instance});
+        res.render("book_detail",{book:results.book,bookins:results.book_instance,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 

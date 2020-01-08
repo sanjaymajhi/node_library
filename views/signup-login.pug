@@ -10,20 +10,26 @@ html(lang='en')
       div(class="col")
         form(action="/users/signup", method="post")
           h1 Sign Up Form
-          label(for="name") Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 
+          label(for="name") Name&emsp;&ensp; : 
           input#name(type="text", name="name")
           br
           br
-          label(for="email") Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 
+          label(for="email") Email&emsp;&ensp; : 
           input#email(type="email", name="email")
           br
           br
-          label(for="mobile") Mobile&nbsp;&nbsp;&nbsp;&nbsp; : 
+          label(for="mobile") Mobile&emsp; : 
           input#mobile(type="number", name="mobile")
           br
           br
           label(for="password") Password : 
           input#password(type="password", name="password")
+          br
+          br
+          label(for="admin") Enter Secret key to register as Admin :
+          br 
+          br
+          input#admin(type="password", name="admin_pass")
           br
           br
           input(type="submit", value="Sign Up")
@@ -34,6 +40,9 @@ html(lang='en')
         if saveerror==1
           h1 Errors :
           h2 Save Error
+        if adminerror==1
+          h1 Errors :
+          h2 Wrong Secret key
         if signup_errors
           h1 Errors :
           ul
@@ -43,7 +52,7 @@ html(lang='en')
       div(class="col")
         form(action="/users/login", method="post")
           h1 Login Form
-          label(for="email") Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 
+          label(for="email") Email&emsp;&ensp; : 
           input#email(type="email", name="email")
           br
           br

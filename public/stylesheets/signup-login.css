@@ -21,4 +21,16 @@ body{
 input[type="submit"]{
     padding:10px;
     font-weight: bold;
+    width:30%;
+}
+
+input[type="number"]{
+    -moz-appearance: textfield;
+    padding: 10px;
+    width: 50%;
+}
+
+input{
+    width:50%;
+    padding: 10px;
 }

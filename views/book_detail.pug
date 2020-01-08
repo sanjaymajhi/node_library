@@ -12,10 +12,11 @@ block content
     each gen in book.genre
       a(href=gen.url) #{gen.name}
       |  &nbsp;&nbsp;&nbsp;&nbsp;
-  button
-    a(href=book.url+"/delete") Delete Book
-  button
-    a(href=book.url+"/update") Update Book
+  if user_logged!=1
+    button
+      a(href=book.url+"/delete") Delete Book
+    button
+      a(href=book.url+"/update") Update Book
   h2 Copies
   hr
   each ins in bookins

@@ -13,9 +13,10 @@ block content
         p=book.summary
     else
       p No books found.
-  button
-    a(href=author.url+"/delete") Delete Author
-  br 
-  br
-  button
-    a(href=author.url+"/update") Update Author
+  if user_logged!=1
+    button
+      a(href=author.url+"/delete") Delete Author
+    br 
+    br
+    button
+      a(href=author.url+"/update") Update Author

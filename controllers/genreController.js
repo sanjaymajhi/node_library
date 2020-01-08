@@ -3,9 +3,11 @@ var book=require("../models/book");
 var async=require("async");
 var validator=require("express-validator");
 
+var logged_user=require("../logged_user");
+
 exports.genre_list=function(req,res){
     Genre.find().sort([["name","ascending"]]).exec((err,list)=>{
-        res.render("genre_list",{title:"Genre list",errors:err,genres:list});
+        res.render("genre_list",{title:"Genre list",errors:err,genres:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 
@@ -27,7 +29,7 @@ exports.genre_detail=function(req,res,next){
           err.status=404;
           return next(err);
       }
-      res.render("genre_detail",{title:"Genre Detail",genre:results.genre,books:results.genre_books});
+      res.render("genre_detail",{title:"Genre Detail",genre:results.genre,books:results.genre_books,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 

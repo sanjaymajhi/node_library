@@ -3,17 +3,19 @@ var book=require("../models/book");
 var validator=require("express-validator");
 var async=require("async");
 
+var logged_user=require("../logged_user");
+
 exports.bookinstance_list=function(req,res){
     bookinstance.find({},"book imprint status due_back").populate('book')
     .exec((err,list)=>{
         if(err){return next(err);}
-        res.render("bookinstance_list",{title:"Book Instance List",errors:err,bookinstances:list});
+        res.render("bookinstance_list",{title:"Book Instance List",errors:err,bookinstances:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     })
 };
 
 exports.bookinstance_detail=function(req,res){
     bookinstance.findById(req.params.id).populate("book").exec((err,result)=>{
-        res.render("book_instance_detail",{detail:result});
+        res.render("book_instance_detail",{detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged});
     });
 };
 
