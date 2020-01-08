@@ -3,10 +3,12 @@ extends layout
 block content
 
   h1=title
+  p (Click on Author name to see his/her books)
   ul
     each author in authors
-      li
+      br
+      li &emsp;
         a(href=author.url) #{author.name}
-        |  #{author.lifespan}
+        |  #{"("+author.lifespan+")"}
     else
       li  There are no authors.

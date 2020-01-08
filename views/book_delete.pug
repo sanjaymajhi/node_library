@@ -4,13 +4,14 @@ block content
   h1=title
   h2=book.title
 
-  p #[strong Author : ]
+  p #[strong Author&emsp;&emsp; : &emsp;]
     a(href=book.author.url) #{book.author.name} 
-  p #[strong Summary :] #{book.summary}
-  p #[strong ISBN : ] #{book.isbn}
-  p #[strong Genre : ]
+  p #[strong Summary&ensp;&nbsp; : &emsp;] #{book.summary}
+  p #[strong ISBN&emsp;&emsp;&emsp; : &emsp;] #{book.isbn}
+  p #[strong Genre&ensp;&emsp;&emsp; : &emsp;]
     each gen in book.genre
-      a(href=gen.url) #{gen.name+", "}
+      a(href=gen.url) #{gen.name}
+      |  &nbsp;&nbsp;&nbsp;&nbsp;
   if bookinstances.length
     h1 #[strong First delete these book instances to delete the book]
     h2 Copies

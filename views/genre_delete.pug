@@ -3,16 +3,20 @@ extends layout
 block content
 
   h1=title
-  h2=genre.name
+  h3="Genre : "+genre.name
+  hr
   if books.length
-    h2 #[strong First delete these books to delete the genre]
+    h4 #[strong First delete these books to delete the genre]
+  hr
   ul
     each book in books
       li 
-        a(href=book.url) #{book.title} 
+        a(href=book.url) Book Title : #{book.title} 
+        hr
         p="Author : "+book.author.name
         p Summary
         p=book.summary
+        hr
     else
       p Did you really want to delete the genre ?
       form(action="",method="post")

@@ -3,9 +3,11 @@ extends layout
 block content
 
   h1=title
+  p (Click on Genre name to see books)
   ul
     each genre in genres
-      li
+      br
+      li &emsp;
         a(href=genre.url) #{genre.name}
     else
       li  There are no genres.

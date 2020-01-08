@@ -10,11 +10,11 @@ router.get('/', function(req, res, next) {
 });
 router.post("/signup",userController.signupController);
 router.post("/login",userController.loginController);
+router.get("/logout",userController.logoutController);
 
 router.get("/books",bookController.book_list);
-
-router.get("/:id",userController.profile);
-
 router.get("/book/:id",bookController.book_detail);
 
+router.get("/:id",userController.profile);
+router.post("/:id/update",userController.updateController);
 module.exports = router;

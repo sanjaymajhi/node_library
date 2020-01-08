@@ -2,9 +2,9 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #[em LocalLibrary], a very basic Express website developed as a tutorial example on the Mozilla Developer Network.
+  p Welcome to #[em Library], this is a library management service made by Sanjay Majhi.
 
-  h1 Dynamic content
+  h1 Record Count
 
   if error
     p Error getting dynamic content.
@@ -12,8 +12,8 @@ block content
     p The library has the following record counts:
 
     ul
-      li #[strong Books:] !{data.bookCount}
-      li #[strong Copies:] !{data.bookInstanceCount}
-      li #[strong Copies available:] !{data.bookInsAvailCount} 
-      li #[strong Authors:] !{data.authorCount}
-      li #[strong Genres:] !{data.genreCount}
+      li #[strong Books&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;:&emsp;] !{data.bookCount}
+      li #[strong Copies&emsp;&emsp;&emsp;&emsp;&emsp;:&emsp;] !{data.bookInstanceCount}
+      li #[strong Copies available&ensp;:&emsp;] !{data.bookInsAvailCount} 
+      li #[strong Authors&emsp;&emsp;&emsp;&emsp;&ensp;:&emsp;] !{data.authorCount}
+      li #[strong Genres&emsp;&emsp;&emsp;&emsp;&emsp;:&emsp;] !{data.genreCount}

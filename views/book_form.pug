@@ -4,11 +4,11 @@ block content
 
   h1=title
   form(action="",method="post")
-    label(for="title") Title :
+    label(for="title") Title&emsp;&emsp;&emsp; : &emsp;
     input#title(type="text",name="title",required="true",value=(book===undefined?"":book.title))
     br
     br
-    label(for="author") Author :
+    label(for="author") Author&emsp;&emsp;: &emsp;
     select#author(type="select",name="author",placeholder="Select Author")
       if(book==undefined)
         option(selected,disabled) Select Author
@@ -19,18 +19,20 @@ block content
           option(value=author._id) #{author.name}
     br
     br
-    label Genres :
-      div 
+    label Genres&ensp;&emsp; : &emsp;
+      div
         each genre in genres
+          br
+          label &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
           input#genre._id(type="checkbox", name="genre",value=genre._id,checked=genre[checked])
-          label(for=genre._id) &nbsp; #{genre.name}  &nbsp;&nbsp;&nbsp;
+          label(for=genre._id) &nbsp; #{genre.name}
     br
     br
-    label(for="summary") Summary :
-    textarea#summary(type="summary",name="summary", cols="30", rows="10") #{book==undefined?"":book.summary}
+    label(for="summary") Summary : &emsp;
+    textarea#summary(type="summary",name="summary", cols="30", rows="1") #{book==undefined?"":book.summary}
     br
     br
-    label(for="isbn") ISBN :
+    label(for="isbn") ISBN&emsp;&emsp; : &emsp;
     input#isbn(type="text",name="isbn",value=(book==undefined?"":book.isbn))
     br
     br

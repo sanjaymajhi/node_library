@@ -3,9 +3,11 @@ extends layout
 block content
   h1=title
   form(action="", method="post")
-    label(for="name") Name :
+    label(for="name") Name&emsp; : &emsp;
     input#name(type='text', placeholder='Fantasy, Poetry etc.' name='name' value=(undefined===genre ? '' : genre.name))
-    input(type="submit")
+    br 
+    br
+    input(type="submit", value="Save")
     if errors
       p Errors :
       ul 

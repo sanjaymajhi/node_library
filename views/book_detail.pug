@@ -4,25 +4,26 @@ block content
 
   h1=book.title
 
-  p #[strong Author : ]
+  p #[strong Author&emsp;&emsp; : &emsp;]
     a(href=book.author.url) #{book.author.name} 
-  p #[strong Summary :] #{book.summary}
-  p #[strong ISBN : ] #{book.isbn}
-  p #[strong Genre : ]
+  p #[strong Summary&ensp;&nbsp; : &emsp;] #{book.summary}
+  p #[strong ISBN&emsp;&emsp;&emsp; : &emsp;] #{book.isbn}
+  p #[strong Genre&ensp;&emsp;&emsp; : &emsp;]
     each gen in book.genre
       a(href=gen.url) #{gen.name}
       |  &nbsp;&nbsp;&nbsp;&nbsp;
-  if user_logged!=1
-    button
-      a(href=book.url+"/delete") Delete Book
-    button
-      a(href=book.url+"/update") Update Book
+  if user_logged==0
+    form(action=book.url+"/delete", method="get")
+      input(type="submit", value="Delete Book")
+    br
+    form(action=book.url+"/update", method="get")
+      input(type="submit", value="Update Book")
   h2 Copies
   hr
   each ins in bookins
     p #[strong #{ins.status}]
-    p Imprint : #{ins.imprint}
-    p Due : #{ins.due_back_formatted}
-    p ID : 
+    p Imprint :&emsp; #{ins.imprint}
+    p Due &emsp;&ensp;:&emsp; #{ins.due_back_formatted}
+    p ID &emsp;&emsp;&ensp;:&emsp; 
       a(href=ins.url) #{ins.id}
     hr

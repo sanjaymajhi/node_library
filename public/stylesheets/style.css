@@ -3,3 +3,46 @@
   padding: 0;
   list-style: none;
 }
+input[type="number"]{
+    -moz-appearance: textfield;
+    padding: 10px;
+    width: 30%;
+}
+
+input{
+  padding: 10px;
+  width:30%;
+  color: black;
+}
+
+textarea,select{
+  color: black;
+  padding: 10px;
+  width:30%;
+}
+
+input[type="checkbox"]{
+  width:5%;
+  padding: 10px;
+  color: black;
+}
+
+body{
+    background-image: linear-gradient(to left,rgba(0,0,0,0.5),rgba(0,0,0,1)),url("../images/home.jpg");
+    background-size: cover;
+    color: white;
+    font-weight: bold;
+}
+
+a{
+  color: white;
+}
+
+.main a:hover{
+  color: white;
+}
+
+input[type="submit"]{
+    color:black;
+    font-weight: bold;
+}

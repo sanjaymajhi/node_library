@@ -6,24 +6,39 @@ var async=require("async");
 var logged_user=require("../logged_user");
 
 exports.bookinstance_list=function(req,res){
-    bookinstance.find({},"book imprint status due_back").populate('book')
-    .exec((err,list)=>{
-        if(err){return next(err);}
-        res.render("bookinstance_list",{title:"Book Instance List",errors:err,bookinstances:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
-    })
+    if(logged_user.user_logged!=2){
+        bookinstance.find({},"book imprint status due_back").populate('book')
+        .exec((err,list)=>{
+            if(err){return next(err);}
+            res.render("bookinstance_list",{title:"Book Instance List",errors:err,bookinstances:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+        })
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_detail=function(req,res){
-    bookinstance.findById(req.params.id).populate("book").exec((err,result)=>{
-        res.render("book_instance_detail",{detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged});
-    });
+    if(logged_user.user_logged!=2){
+        bookinstance.findById(req.params.id).populate("book").exec((err,result)=>{
+            res.render("book_instance_detail",{title:"Book Instance Detail",detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+        });
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_create_get=function(req,res,next){
-    book.find().exec((err,results)=>{
-        if(err){return next(err);}
-        res.render("bookinstance_form",{title:"Book Instance Form",books:results});
-    });
+    if(logged_user.user_logged==0){
+        book.find().exec((err,results)=>{
+            if(err){return next(err);}
+            res.render("bookinstance_form",{title:"Book Instance Form",books:results,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+        });
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_create_post=[
@@ -38,56 +53,75 @@ exports.bookinstance_create_post=[
     validator.sanitizeBody("due_back").toDate(),
 
     (req,res,next)=>{
-        const errors=validator.validationResult(req);
-        
-        var Bookinstance=new bookinstance({
-            book:req.body.book,
-            imprint:req.body.imprint,
-            status:req.body.status,
-            due_back:req.body.due_back
-        });
-
-        if(!errors.isEmpty()){
-            book.find().exec((err,results)=>{
-                if(err){return next(err);}
-                res.render("bookinstance_form",{title:"Book Instance Form",books:results,bookinstance:Bookinstance,errors:errors.array()});
+        if(logged_user.user_logged==0){
+            const errors=validator.validationResult(req);
+            
+            var Bookinstance=new bookinstance({
+                book:req.body.book,
+                imprint:req.body.imprint,
+                status:req.body.status,
+                due_back:req.body.due_back
             });
+
+            if(!errors.isEmpty()){
+                book.find().exec((err,results)=>{
+                    if(err){return next(err);}
+                    res.render("bookinstance_form",{title:"Book Instance Form",books:results,bookinstance:Bookinstance,errors:errors.array(),user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                });
+            }
+            else{
+                Bookinstance.save((err)=>{
+                    if(err){return next(err);}
+                    res.redirect(Bookinstance.url);
+                })
+            }
         }
         else{
-            Bookinstance.save((err)=>{
-                if(err){return next(err);}
-                res.redirect(Bookinstance.url);
-            })
+            res.redirect("/users/")
         }
     }
 ]
 
 exports.bookinstance_delete_get=function(req,res,next){
-    bookinstance.findById(req.params.id).populate("book").exec((err,instance)=>{
-        if(err){return next(err);}
-        res.render("bookinstance_delete",{title:"Book Instance Delete Page",bookinstance_detail:instance});
-    });
+    if(logged_user.user_logged==0){
+        bookinstance.findById(req.params.id).populate("book").exec((err,instance)=>{
+            if(err){return next(err);}
+            res.render("bookinstance_delete",{title:"Book Instance Delete Page",bookinstance_detail:instance,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+        });
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_delete_post=function(req,res,next){
-    bookinstance.findById(req.body.biid).populate("book").exec((err,instance)=>{
-        if(err){return next(err);}
-        if(bookinstance==null){
-            res.render("bookinstance_delete",{title:"Book Instance Delete Page",bookinstance_detail:instance});
-        }
-        bookinstance.findByIdAndRemove(req.body.biid).exec((err)=>{
+    if(logged_user.user_logged==0){
+        bookinstance.findById(req.body.biid).populate("book").exec((err,instance)=>{
             if(err){return next(err);}
-            res.redirect("/catalog/bookinstances");
-        })
-    });
+            if(bookinstance==null){
+                res.render("bookinstance_delete",{title:"Book Instance Delete Page",bookinstance_detail:instance,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            }
+            bookinstance.findByIdAndRemove(req.body.biid).exec((err)=>{
+                if(err){return next(err);}
+                res.redirect("/catalog/bookinstances");
+            })
+        });
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_update_get=function(req,res,next){
-    
-    bookinstance.findById(req.params.id).populate("book").exec((err,results)=>{
-        if(err){return next(err);}
-        res.render("bookinstance_form.pug",{title:"Book Instance Update Form",book:results.book,bookinstance:results,update:1});
-    })
+    if(logged_user.user_logged==0){
+        bookinstance.findById(req.params.id).populate("book").exec((err,results)=>{
+            if(err){return next(err);}
+            res.render("bookinstance_form.pug",{title:"Book Instance Update Form",book:results.book,bookinstance:results,update:1,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+        })
+    }
+    else{
+        res.redirect("/users/")
+    }
 };
 
 exports.bookinstance_update_post=[
@@ -101,24 +135,29 @@ exports.bookinstance_update_post=[
     validator.sanitizeBody("due_back").toDate(),
 
     function(req,res,nex){
-        const errors=validator.validationResult(req);
+        if(logged_user.user_logged==0){
+            const errors=validator.validationResult(req);
 
-        var Bookinstance=new bookinstance({
-            book:req.body.book,
-            imprint:req.body.imprint,
-            status:req.body.status,
-            due_back:req.body.due_back,
-            _id:req.params.id
-        });
+            var Bookinstance=new bookinstance({
+                book:req.body.book,
+                imprint:req.body.imprint,
+                status:req.body.status,
+                due_back:req.body.due_back,
+                _id:req.params.id
+            });
 
-        if(!errors.isEmpty()){
-            res.render("bookinstance_form",{title:"Book Instance Update form",bookinstance:Bookinstance,book:Bookinstance.book,errors:errors.array(),update:2});
+            if(!errors.isEmpty()){
+                res.render("bookinstance_form",{title:"Book Instance Update form",bookinstance:Bookinstance,book:Bookinstance.book,errors:errors.array(),update:2,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            }
+            else{
+                bookinstance.findByIdAndUpdate(req.params.id,Bookinstance,{}).exec((err,binstance)=>{
+                    if(err){return next(err);}
+                    res.redirect(binstance.url);
+                })
+            }
         }
         else{
-            bookinstance.findByIdAndUpdate(req.params.id,Bookinstance,{}).exec((err,binstance)=>{
-                if(err){return next(err);}
-                res.redirect(binstance.url);
-            })
+            res.redirect("/users/")
         }
     }
 ]

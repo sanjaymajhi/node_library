@@ -11,12 +11,7 @@ body{
     background-image: linear-gradient(to right,rgba(0,0,0,0.1),rgba(0,0,0,1)),url("../images/home.jpg");
 }
 
-.button a{
-    text-decoration: none;
-    color: black;
-}
-
-.button{
-    margin:20px;
-    padding : 10px;
+input[type="submit"]{
+    padding: 10px;
+    font-weight: bold;
 }

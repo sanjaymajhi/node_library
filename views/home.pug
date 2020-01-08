@@ -8,7 +8,5 @@ html(lang='en')
   body
     div(id="main")
       h1 Welcome to the Library
-      button(class="button")
-        a(href="/catalog") Available books
-      button(class="button")
-        a(href="/users") Signup / Login
+      form(action="/users", method="get")
+        input(type="submit", value="Signup / Login")

@@ -2,11 +2,13 @@ extends layout
 
 block content
   h1=title
-
+  p (Click on Book name to see book's instances)
   ul
   - books.sort(function(a, b) {let textA = a.title.toUpperCase(); let textB = b.title.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
   each book in books
-    li 
+    br
+    
+    li &emsp;
       if(user_logged==1)
         a(href="/users/book/"+book._id) #{book.title} 
         |  (#{book.author.name})

@@ -10,6 +10,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var catalogRouter= require("./routes/catalog");
 
+var logged_user=require("./logged_user");
+
 var compression=require("compression");
 var helmet=require("helmet");
 

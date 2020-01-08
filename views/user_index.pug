@@ -4,21 +4,21 @@ block content
 
   h1=title
 
-  form(action="", method="post")
-    label(for="name") Name&emsp;&ensp; : 
+  form(action="/users/"+user._id+"/update", method="post")
+    label(for="name") Name&emsp;&emsp; : &emsp;
     input#name(type="text", name="name",value=user.name)
     br
     br
-    label(for="email") Email&emsp;&ensp; : 
+    label(for="email") Email&emsp;&emsp; : &emsp;
     input#email(type="email", name="email",value=user.email)
     br
     br
-    label(for="mobile") Mobile&emsp; : 
+    label(for="mobile") Mobile&emsp;&ensp; : &emsp;
     input#mobile(type="number", name="mobile",value=user.mobile)
     br
     br
-    label(for="password") Password : 
-    input#password(type="password", name="password",value=user.password)
+    label(for="password") Password : &emsp;
+    input#password(type="password", name="password")
     br
     br
     input(type="hidden", name="admin_pass",value="admin")
@@ -30,9 +30,6 @@ block content
   if usererror==1
     h1 Errors :
     h2 User Already Exists
-  if saveerror==1
-    h1 Errors :
-    h2 Save Error
   if signup_errors
     h1 Errors :
     ul

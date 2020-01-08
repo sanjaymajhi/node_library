@@ -15,6 +15,7 @@ exports.signupController=[
 
     validator.sanitizeBody("name").escape(),
     validator.sanitizeBody("mobile").escape(),
+    validator.sanitizeBody("admin_pass").escape(),
 
     async function(req,res){
 
@@ -57,7 +58,10 @@ exports.signupController=[
             
         });
         logged_user.user_detail=user;
-        if(admin==false){
+        if(admin){
+            logged_user.user_logged=0;
+        }
+        else{
             logged_user.user_logged=1;
         }
         res.redirect("/users/"+user._id);
@@ -89,15 +93,87 @@ exports.loginController=[
             return;
         }
         logged_user.user_detail=user;
-        if(user.admin==false){
+        if(user.admin){
+            logged_user.user_logged=0;
+        }
+        else{
             logged_user.user_logged=1;
         }
-        
         res.redirect("/users/"+user._id);
-        
     }
 ];
 
 exports.profile=(req,res)=>{
-    res.render("user_index",{title:"Profile Page",user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+    if(logged_user.user_logged!=2){
+        res.render("user_index",{title:"Profile Page",user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+    }
+    else{
+        res.redirect("/users/")
+    }
+}
+
+exports.updateController=[
+    
+    validator.body("name","Invalid Name").isLength({min:2}),
+    validator.body("email","Invalid email").isEmail(),
+    validator.body("mobile","Invalid mobile").isLength({min:10,max:10}).isNumeric().withMessage("Inavlid mobile"),
+    validator.body("password","Invalid password").isLength({min:8}),
+
+    validator.sanitizeBody("name").escape(),
+    validator.sanitizeBody("mobile").escape(),
+
+    async function(req,res){
+
+        const errors=validator.validationResult(req);
+
+        if(!errors.isEmpty()){
+            res.render("user_index",{signup_errors:errors.array(),user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            return;
+        }
+
+        if(logged_user.user_detail.email!=req.body.email){
+            var user=await User.find({email:req.body.email})
+            if(user.length){
+                res.render("user_index",{usererror:1,user:logged_user.user_detail,user_logged:logged_user.user_logged})
+                return;
+            };
+        }
+
+        if(req.body.admin_pass=="admin"){
+            admin=true;
+        }
+        else if(req.body.admin_pass==""){
+            admin=false;
+        }
+
+        var user=new User({
+            name:req.body.name,
+            email:req.body.email,
+            mobile:req.body.mobile,
+            password:req.body.password,
+            admin:admin,
+            _id:req.params.id
+        });
+
+        const salt=await bcrypt.genSalt(10);
+        user.password=await bcrypt.hash(user.password,salt);
+
+        await User.findByIdAndUpdate(req.params.id,user,(err,user_detail)=>{
+            if(err){console.log(err)}
+            
+        });
+        logged_user.user_detail=user;
+        res.redirect("/users/"+logged_user.user_detail._id);
+    }
+];
+
+exports.logoutController=(req,res)=>{
+    if(logged_user.user_logged!=2){
+        logged_user.user_detail=null;
+        logged_user.user_logged=2;
+        res.redirect("/users/");
+    }
+    else{
+        res.redirect("/users/")
+    }
 }
