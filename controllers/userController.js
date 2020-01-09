@@ -3,6 +3,7 @@ var bcrypt=require("bcryptjs");
 var async=require("async");
 
 var User=require("../models/user");
+var Bookinstance=require("../models/bookinstance");
 
 var logged_user=require("../logged_user");
 
@@ -104,8 +105,13 @@ exports.loginController=[
 ];
 
 exports.profile=(req,res)=>{
-    if(logged_user.user_logged!=2){
-        res.render("user_index",{title:"Profile Page",user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+    if(logged_user.user_logged!=2 && req.params.id==logged_user.user_detail._id.toString()){
+        res.render("user_index",{title:"Profile Page",user_detail:logged_user.user_detail,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+    }
+    else if(req.params.id!=logged_user.user_detail._id.toString()){
+        User.findById(req.params.id).exec((err,result)=>{
+            res.render("user_index",{title:"Profile Page",user_detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+        })
     }
     else{
         res.redirect("/users/")
@@ -172,6 +178,27 @@ exports.logoutController=(req,res)=>{
         logged_user.user_detail=null;
         logged_user.user_logged=2;
         res.redirect("/users/");
+    }
+    else{
+        res.redirect("/users/")
+    }
+}
+
+exports.borrowedController=(req,res)=>{
+    var user_books=[];
+    if(logged_user.user_logged==1){
+        Bookinstance.find({},"book imprint due_back").populate("book").exec((err,results)=>{
+            if(err){console.log(err)}
+            for(let i=0;i<logged_user.user_detail.books_borrowed.length;i++){
+                for(let j=0;j<results.length;j++){
+                    
+                    if(logged_user.user_detail.books_borrowed[i]==results[j]._id.toString()){
+                        user_books.push(results[j]);
+                    }
+                }
+            }
+            res.render("books_borrowed",{title:"Books Borrowed",books:user_books,user:logged_user.user_detail,user_logged:logged_user.user_logged})
+        })
     }
     else{
         res.redirect("/users/")

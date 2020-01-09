@@ -3,13 +3,16 @@ extends layout
 block content
 
   h1=title
-  p ID&emsp;&emsp;&emsp;&nbsp; :&emsp; #{detail.id}
-  p #[strong Title&emsp;&emsp;&ensp;:&emsp; ]
+  p ID&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp; :&emsp; #{detail.id}
+  p #[strong Title&emsp;&emsp;&ensp;&emsp;&emsp;:&emsp; ]
     a(href=detail.book.url) #{detail.book.title}
-  p #[strong Imprint&emsp; :&emsp; ] #{detail.imprint}
-  p #[strong Status&emsp;&nbsp; :&emsp; ] #{detail.status}
+  p #[strong Imprint&emsp;&emsp;&emsp; :&emsp; ] #{detail.imprint}
+  p #[strong Status&emsp;&nbsp;&emsp;&emsp; :&emsp; ] #{detail.status}
   if detail.status=="Maintenance" || detail.status=="Loaned"
-    p #[strong Due&emsp;&emsp;&ensp; :&emsp; ] #{detail.due_back_formatted}
+    p #[strong Due&emsp;&emsp;&ensp;&emsp;&emsp; :&emsp; ] #{detail.due_back_formatted}
+    if detail.status="Loaned"
+      p #[strong Borrowed By&nbsp;:&emsp;] #{detail.borrowed_by.name} &emsp;
+        a(href="/users/"+detail.borrowed_by._id) #{"( "+detail.borrowed_by._id+" )"}
   br
   if user_logged==0
     form(action=detail.url+"/delete", method="get")
@@ -17,3 +20,7 @@ block content
     br
     form(action=detail.url+"/update", method="get")
       input(type="submit", value="Update Book Instance")
+  if user_logged==1 && detail.status=="Available"
+    form(action=detail.url+"/borrow", method="get")
+      input(type="submit", value="Borrow")
+    

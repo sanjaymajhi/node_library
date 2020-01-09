@@ -1,5 +1,6 @@
 var bookinstance=require("../models/bookinstance");
 var book=require("../models/book");
+var User=require("../models/user");
 var validator=require("express-validator");
 var async=require("async");
 
@@ -20,7 +21,8 @@ exports.bookinstance_list=function(req,res){
 
 exports.bookinstance_detail=function(req,res){
     if(logged_user.user_logged!=2){
-        bookinstance.findById(req.params.id).populate("book").exec((err,result)=>{
+        bookinstance.findById(req.params.id).populate("book").populate("borrowed_by").exec((err,result)=>{
+            if(err){console.log(err)}
             res.render("book_instance_detail",{title:"Book Instance Detail",detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged});
         });
     }
@@ -113,7 +115,7 @@ exports.bookinstance_delete_post=function(req,res,next){
 };
 
 exports.bookinstance_update_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(logged_user.user_logged!=2){
         bookinstance.findById(req.params.id).populate("book").exec((err,results)=>{
             if(err){return next(err);}
             res.render("bookinstance_form.pug",{title:"Book Instance Update Form",book:results.book,bookinstance:results,update:1,user:logged_user.user_detail,user_logged:logged_user.user_logged});
@@ -135,7 +137,7 @@ exports.bookinstance_update_post=[
     validator.sanitizeBody("due_back").toDate(),
 
     function(req,res,nex){
-        if(logged_user.user_logged==0){
+        if(logged_user.user_logged!=2){
             const errors=validator.validationResult(req);
 
             var Bookinstance=new bookinstance({
@@ -143,7 +145,8 @@ exports.bookinstance_update_post=[
                 imprint:req.body.imprint,
                 status:req.body.status,
                 due_back:req.body.due_back,
-                _id:req.params.id
+                _id:req.params.id,
+                borrowed_by:logged_user.user_detail._id
             });
 
             if(!errors.isEmpty()){
@@ -152,7 +155,26 @@ exports.bookinstance_update_post=[
             else{
                 bookinstance.findByIdAndUpdate(req.params.id,Bookinstance,{}).exec((err,binstance)=>{
                     if(err){return next(err);}
-                    res.redirect(binstance.url);
+                    if(logged_user.user_logged==1){
+                        logged_user.user_detail.books_borrowed.push(Bookinstance._id);
+                        var user=new User({
+                            books_borrowed:logged_user.user_detail.books_borrowed,
+                            name:logged_user.user_detail.name,
+                            email:logged_user.user_detail.email,
+                            mobile:logged_user.user_detail.mobile,
+                            password:logged_user.user_detail.password,
+                            admin:logged_user.user_detail.admin,
+                            _id:logged_user.user_detail._id
+                        });
+
+                        User.findByIdAndUpdate(user._id,user,(err,user_detail)=>{
+                            if(err){console.log(err)}
+                        });
+                        res.redirect("/users/"+logged_user.user_detail._id);
+                    }
+                    else{
+                        res.redirect(binstance.url);
+                    }
                 })
             }
         }
@@ -160,4 +182,5 @@ exports.bookinstance_update_post=[
             res.redirect("/users/")
         }
     }
-]
+];
+

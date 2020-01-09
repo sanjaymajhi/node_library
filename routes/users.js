@@ -17,4 +17,6 @@ router.get("/book/:id",bookController.book_detail);
 
 router.get("/:id",userController.profile);
 router.post("/:id/update",userController.updateController);
+
+router.get("/:id/borrowed",userController.borrowedController);
 module.exports = router;

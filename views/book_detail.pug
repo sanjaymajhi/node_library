@@ -26,4 +26,7 @@ block content
     p Due &emsp;&ensp;:&emsp; #{ins.due_back_formatted}
     p ID &emsp;&emsp;&ensp;:&emsp; 
       a(href=ins.url) #{ins.id}
+    if(ins.status=="Available" && user_logged==1)
+      form(action="/catalog/bookinstance/"+ins.id+"/borrow", method="get")
+        input(type="submit", value="Borrow")
     hr

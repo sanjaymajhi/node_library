@@ -1,0 +1,11 @@
+extends layout
+
+block content
+
+  h1=title
+  each ins in bookins
+    p #[strong #{ins.status}]
+    p Imprint :&emsp; #{ins.imprint}
+    p Due &emsp;&ensp;:&emsp; #{ins.due_back_formatted}
+    p ID &emsp;&emsp;&ensp;:&emsp; 
+      a(href=ins.url) #{ins.id}  

@@ -24,7 +24,6 @@ router.post("/book/:id/update",bookController.book_update_post);
 router.get("/book/:id/delete",bookController.book_delete_get);
 router.post("/book/:id/delete",bookController.book_delete_post);
 
-
 //bookinstance
 router.get("/bookinstances",bookinstanceController.bookinstance_list);
 router.post("/bookinstances",bookinstanceController.bookinstance_list);
@@ -40,6 +39,9 @@ router.post("/bookinstance/:id/delete",bookinstanceController.bookinstance_delet
 
 router.get("/bookinstance/:id",bookinstanceController.bookinstance_detail);
 router.post("/bookinstance/:id",bookinstanceController.bookinstance_detail);
+
+router.get("/bookinstance/:id/borrow",bookinstanceController.bookinstance_update_get);
+router.post("/bookinstance/:id/borrow",bookinstanceController.bookinstance_update_post);
 
 //genre
 router.get("/genre/create",genreController.genre_create_get);

@@ -14,7 +14,7 @@ html(lang='en')
         div(class='col-sm-2')
           block sidebar
             ul(class='sidebar-nav nav')
-              if user_logged==1 
+              if user_logged==1
                 li 
                   a(href='/catalog') Home
                 li 
@@ -30,7 +30,7 @@ html(lang='en')
                 li
                   a(href="/users/"+user._id) Profile
                 li
-                  a(href="/users/borrowed") Books borrowed
+                  a(href="/users/"+user._id+"/borrowed") Books borrowed
                 li
                   a(href="/users/logout/") Log Out
               else

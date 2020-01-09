@@ -6,24 +6,28 @@ block content
 
   form(action="/users/"+user._id+"/update", method="post")
     label(for="name") Name&emsp;&emsp; : &emsp;
-    input#name(type="text", name="name",value=user.name)
+    input#name(type="text", name="name",value=user_detail.name)
     br
     br
     label(for="email") Email&emsp;&emsp; : &emsp;
-    input#email(type="email", name="email",value=user.email)
+    input#email(type="email", name="email",value=user_detail.email)
     br
     br
     label(for="mobile") Mobile&emsp;&ensp; : &emsp;
-    input#mobile(type="number", name="mobile",value=user.mobile)
+    input#mobile(type="number", name="mobile",value=user_detail.mobile)
     br
     br
-    label(for="password") Password : &emsp;
-    input#password(type="password", name="password")
-    br
-    br
-    input(type="hidden", name="admin_pass",value="admin")
-    input(type="submit", value="Update")
-  if(user.admin)
+    if user_detail._id==user._id.toString()
+      label(for="password") Password : &emsp;
+      input#password(type="password", name="password")
+      br
+      br
+      if(user.admin)
+        input(type="hidden", name="admin_pass",value="admin")
+      else
+        input(type="hidden", name="admin_pass",value="")
+      input(type="submit", value="Update")
+  if(user.admin && user_detail._id==user._id.toString())
     br
     p As an Admin, you have extra benefits like creating, updating and deleting authors, genres, books and book instances
 

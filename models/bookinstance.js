@@ -7,7 +7,8 @@ var bookinstanceSchema=new Schema({
     book:{type:Schema.Types.ObjectId,required:true,ref:"Book"},
     imprint:{type:String,required:true},
     status:{type:String,required:true,enum:["Maintenance","Available","Loaned","Reserved"],default:"Maintenance"},
-    due_back:{type:Date,default:Date.now}
+    due_back:{type:Date,default:Date.now},
+    borrowed_by:{type:Schema.Types.ObjectId,ref:"User"}
 });
 
 bookinstanceSchema.virtual("url").get(function(){

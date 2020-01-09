@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  
+  h1=title
+  hr
+  ul
+    each book in books
+      li #[strong Book Title : ] #{book.book.title}
+      hr
+      p #[strong Imprint : ]#{book.imprint}
+      p #[strong Return By : ]#{book.due_back}
+      hr
