@@ -170,6 +170,25 @@ exports.bookinstance_update_post=[
                         User.findByIdAndUpdate(user._id,user,(err,user_detail)=>{
                             if(err){console.log(err)}
                         });
+                        var transporter=nodemailer.createTransport({
+                            service:"gmail",
+                            auth:{
+                                user:"web.developer.sanjay.majhi",
+                                pass:"Qwerty12345*"
+                            }
+                        })
+                
+                        var mailoption={
+                            from:"web.developer.sanjay.majhi",
+                            to:logged_user.user_detail.email,
+                            subject:"book borrowed",
+                            text:"New Book Borrowed : "+Bookinstance._id+", return by: "+Bookinstance.due_back
+                        }
+                
+                        transporter.sendMail(mailoption,(err,info)=>{
+                            if(err){console.log(err)}
+                            else{console.log("Main sent : "+info.response)}
+                        })
                         res.redirect("/users/"+logged_user.user_detail._id+"/borrowed");
                     }
                     else{

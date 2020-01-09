@@ -7,6 +7,8 @@ var Bookinstance=require("../models/bookinstance");
 
 var logged_user=require("../logged_user");
 
+var nodemailer=require("nodemailer");
+
 exports.signupController=[
     
     validator.body("name","Invalid Name").isLength({min:2}),
@@ -65,6 +67,28 @@ exports.signupController=[
         else{
             logged_user.user_logged=1;
         }
+         
+        var transporter=nodemailer.createTransport({
+            service:"gmail",
+            auth:{
+                user:"web.developer.sanjay.majhi@gmail.com",
+                pass:"Qwerty12345*"
+            }
+        })
+
+        var mailoption={
+            from:"web.developer.sanjay.majhi@gmail.com",
+            to:user.email,
+            subject:"Singup successful",
+            text:"Welcome "+user.name+" , to our library management website service. Here, you can create books and your library users can take books on loan. Thanks from Sanjay Majhi"
+        }
+        
+        transporter.sendMail(mailoption,(err,info)=>{
+            if(err){console.log(err)}
+            else{
+                console.log("Email sent : "+info.response);
+            }
+        })
         res.redirect("/users/"+user._id);
     }
 ];
