@@ -3,19 +3,42 @@ extends layout
 block content
   h1= title
   p (Click on Book Instance name to see details)
+  h2 Available
+  hr
+  ul
+  each val in bookinstances
+    if val.status=='Available'
+      li &emsp;
+        a(href=val.url) #{val.book.title} : #{val.imprint}
+  else
+    li There are no book copies in this library.
+  h2 Loaned
+  hr
+  ul
+  each val in bookinstances
+    if val.status=='Loaned'
+      li &emsp;
+        a(href=val.url) #{val.book.title} : #{val.imprint}
+          span (Due: #{val.due_back} )
+  else
+    li There are no book copies in this library.
+  h2 Under Maintenance
+  hr
+  ul
+  each val in bookinstances
+    if val.status=='Maintenance'
+      li &emsp;
+        a(href=val.url) #{val.book.title} : #{val.imprint}
+          span (Due: #{val.due_back} )
+  else
+    li There are no book copies in this library.
+  h2 Reserved
+  hr
   ul
     each val in bookinstances
-      br
-      li &emsp;
-        a(href=val.url) #{val.book.title} : #{val.imprint} - 
-        if val.status=='Available'
-          span #{val.status}
-        else if val.status=='Maintenance'
-          span #{val.status}
-        else
-          span #{val.status} 
-        if val.status!='Available'
-          span (Due: #{val.due_back_formatted} )
-
+      if val.status=='Reserved'
+        li &emsp;
+          a(href=val.url) #{val.book.title} : #{val.imprint}
+            span (Due: #{val.due_back} )
     else
       li There are no book copies in this library.

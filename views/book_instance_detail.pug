@@ -9,7 +9,7 @@ block content
   p #[strong Imprint&emsp;&emsp;&emsp; :&emsp; ] #{detail.imprint}
   p #[strong Status&emsp;&nbsp;&emsp;&emsp; :&emsp; ] #{detail.status}
   if detail.status=="Maintenance" || detail.status=="Loaned"
-    p #[strong Due&emsp;&emsp;&ensp;&emsp;&emsp; :&emsp; ] #{detail.due_back_formatted}
+    p #[strong Due&emsp;&emsp;&ensp;&emsp;&emsp; :&emsp; ] #{detail.due_back}
     if detail.status="Loaned"
       p #[strong Borrowed By&nbsp;:&emsp;] #{detail.borrowed_by.name} &emsp;
         a(href="/users/"+detail.borrowed_by._id) #{"( "+detail.borrowed_by._id+" )"}

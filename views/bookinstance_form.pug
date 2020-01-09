@@ -40,7 +40,7 @@ block content
       input(type="hidden", name="status", value="Loaned")
     br
     br
-    label(for="due_back") Available By &emsp; : &emsp; 
+    label(for="due_back") Due Back &emsp;&emsp;&nbsp; : &emsp; 
     input#due_back(type="Date",name="due_back",value=(bookinstance==undefined ?"": bookinstance.status=="Available"?"":bookinstance.due_back_formatted))
     br
     br

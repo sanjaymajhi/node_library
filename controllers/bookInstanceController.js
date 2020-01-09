@@ -170,7 +170,7 @@ exports.bookinstance_update_post=[
                         User.findByIdAndUpdate(user._id,user,(err,user_detail)=>{
                             if(err){console.log(err)}
                         });
-                        res.redirect("/users/"+logged_user.user_detail._id);
+                        res.redirect("/users/"+logged_user.user_detail._id+"/borrowed");
                     }
                     else{
                         res.redirect(binstance.url);

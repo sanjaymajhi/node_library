@@ -72,7 +72,7 @@ exports.signupController=[
 exports.loginController=[
     
     validator.body("email","Invalid Email").isEmail(),
-    validator.body("password").isLength({min:8}),
+    validator.body("password","Invalid password").isLength({min:8}),
 
     async (req,res)=>{
 
@@ -110,7 +110,7 @@ exports.profile=(req,res)=>{
     }
     else if(req.params.id!=logged_user.user_detail._id.toString()){
         User.findById(req.params.id).exec((err,result)=>{
-            res.render("user_index",{title:"Profile Page",user_detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+            res.render("user_index",{title:"Borrower Profile Page",user_detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
         })
     }
     else{
