@@ -80,7 +80,7 @@ exports.signupController=[
             from:"web.developer.sanjay.majhi@gmail.com",
             to:user.email,
             subject:"Singup successful",
-            text:"Welcome "+user.name+" , to our library management website service. Here, you can create books and your library users can take books on loan. Thanks from Sanjay Majhi"
+            text:"Welcome "+user.name+" , to our library management website service. \nHere, you can create books and your library users can take books on loan. \nThanks from Sanjay Majhi"
         }
         
         transporter.sendMail(mailoption,(err,info)=>{

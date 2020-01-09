@@ -6,6 +6,8 @@ var async=require("async");
 
 var logged_user=require("../logged_user");
 
+var nodemailer=require("nodemailer");
+
 exports.bookinstance_list=function(req,res){
     if(logged_user.user_logged!=2){
         bookinstance.find({},"book imprint status due_back").populate('book')
@@ -182,7 +184,7 @@ exports.bookinstance_update_post=[
                             from:"web.developer.sanjay.majhi",
                             to:logged_user.user_detail.email,
                             subject:"book borrowed",
-                            text:"New Book Borrowed : "+Bookinstance._id+", return by: "+Bookinstance.due_back
+                            text:"New Book Borrowed \n book instance id : "+Bookinstance._id+"\n return by: "+Bookinstance.due_back
                         }
                 
                         transporter.sendMail(mailoption,(err,info)=>{
