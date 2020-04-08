@@ -12,6 +12,9 @@ var catalogRouter = require("./routes/catalog");
 var compression = require("compression");
 var helmet = require("helmet");
 
+var dotenv = require("dotenv");
+dotenv.config();
+
 var app = express();
 var mongoDB = process.env.MONGODB_URI;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
