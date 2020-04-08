@@ -16,8 +16,7 @@ var compression=require("compression");
 var helmet=require("helmet");
 
 var app = express();
-var dev_db_URl='mongodb+srv://sanjay:1Sanjay@@cluster0-1naxh.mongodb.net/test?retryWrites=true&w=majority';
-var mongoDB=process.env.MONGODB_URI || dev_db_URl;
+var mongoDB=process.env.MONGODB_URI;
 mongoose.connect(mongoDB,{useNewUrlParser:true});
 var db=mongoose.connection;
 db.on("error",console.error.bind(console,"Mongo Database Error:"));
