@@ -15,7 +15,7 @@ bookinstanceSchema.virtual("url").get(function(){
     return "/catalog/bookinstance/"+this._id;
 });
 
-bookinstanceSchema.virtual("due_back_formatted").get(()=>{
+bookinstanceSchema.virtual("due_back_formatted").get(function(){
     return moment(this.due_back).format("YYYY-MM-DD");
 });
 

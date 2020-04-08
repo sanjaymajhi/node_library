@@ -1,11 +1,12 @@
 var validator=require("express-validator");
 var bcrypt=require("bcryptjs");
 var async=require("async");
+var jwt=require("jsonwebtoken");
 
 var User=require("../models/user");
 var Bookinstance=require("../models/bookinstance");
 
-var logged_user=require("../logged_user");
+var auth=require("../auth");
 
 var nodemailer=require("nodemailer");
 
@@ -60,36 +61,40 @@ exports.signupController=[
             if(err){throw err}
             
         });
-        logged_user.user_detail=user;
-        if(admin){
-            logged_user.user_logged=0;
-        }
-        else{
-            logged_user.user_logged=1;
-        }
-         
-        var transporter=nodemailer.createTransport({
-            service:"gmail",
-            auth:{
-                user:"web.developer.sanjay.majhi@gmail.com",
-                pass:"Qwerty12345*"
+        var payload={
+            user:{
+                name:req.body.name,
+                email:req.body.email,
+                mobile:req.body.mobile,
+                admin:admin
             }
-        })
-
-        var mailoption={
-            from:"web.developer.sanjay.majhi@gmail.com",
-            to:user.email,
-            subject:"Singup successful",
-            text:"Welcome "+user.name+" , to our library management website service. \nHere, you can create books and your library users can take books on loan. \nThanks from Sanjay Majhi"
         }
+        jwt.sign(payload,"sanjay",{expiresIn:3600},(err,token)=>{
+            if(err){throw err}
+            var transporter=nodemailer.createTransport({
+                service:"gmail",
+                auth:{
+                    user:"web.developer.sanjay.majhi@gmail.com",
+                    pass:"Qwerty12345*"
+                }
+            })
+    
+            var mailoption={
+                from:"web.developer.sanjay.majhi@gmail.com",
+                to:user.email,
+                subject:"Singup successful",
+                text:"Welcome "+user.name+" , to our library management website service. \nHere, you can create books and your library users can take books on loan. \nThanks from Sanjay Majhi"
+            }
+            
+            transporter.sendMail(mailoption,(err,info)=>{
+                if(err){console.log(err)}
+                else{
+                    console.log("Email sent : "+info.response);
+                }
+            })
+            res.status(200).header({token:token}).redirect("/users/"+user._id);
+        })
         
-        transporter.sendMail(mailoption,(err,info)=>{
-            if(err){console.log(err)}
-            else{
-                console.log("Email sent : "+info.response);
-            }
-        })
-        res.redirect("/users/"+user._id);
     }
 ];
 
@@ -117,24 +122,31 @@ exports.loginController=[
             res.render("signup-login",{matcherror:1});
             return;
         }
-        logged_user.user_detail=user;
-        if(user.admin){
-            logged_user.user_logged=0;
+        payload={
+            user:{
+                _id:user._id,
+                name:user.name,
+                email:user.email,
+                mobile:user.mobile,
+                admin:user.admin
+            }
         }
-        else{
-            logged_user.user_logged=1;
-        }
-        res.redirect("/users/"+user._id);
+
+        jwt.sign(payload,"sanjay",{expiresIn:3600},(err,token)=>{
+            if(err){throw err}
+            console.log(user._id)
+            res.status(200).json({token})
+        })
     }
 ];
 
 exports.profile=(req,res)=>{
-    if(logged_user.user_logged!=2 && req.params.id==logged_user.user_detail._id.toString()){
-        res.render("user_index",{title:"Profile Page",user_detail:logged_user.user_detail,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+    if(req.user_logged!=2 && req.params.id==req.user_detail._id.toString()){
+        res.render("user_index",{title:"Profile Page",user_detail:req.user_detail,user:req.user_detail,user_logged:req.user_logged}) 
     }
-    else if(req.params.id!=logged_user.user_detail._id.toString()){
+    else if(req.params.id!=req.user_detail._id.toString()){
         User.findById(req.params.id).exec((err,result)=>{
-            res.render("user_index",{title:"Borrower Profile Page",user_detail:result,user:logged_user.user_detail,user_logged:logged_user.user_logged}) 
+            res.render("user_index",{title:"Borrower Profile Page",user_detail:result,user:req.user_detail,req:req.user_logged}) 
         })
     }
     else{
@@ -157,14 +169,14 @@ exports.updateController=[
         const errors=validator.validationResult(req);
 
         if(!errors.isEmpty()){
-            res.render("user_index",{signup_errors:errors.array(),user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("user_index",{signup_errors:errors.array(),user:req.user_detail,user_logged:req.user_logged});
             return;
         }
 
-        if(logged_user.user_detail.email!=req.body.email){
+        if(req.user_detail.email!=req.body.email){
             var user=await User.find({email:req.body.email})
             if(user.length){
-                res.render("user_index",{usererror:1,user:logged_user.user_detail,user_logged:logged_user.user_logged})
+                res.render("user_index",{usererror:1,user:req.user_detail,user_logged:req.user_logged})
                 return;
             };
         }
@@ -192,15 +204,15 @@ exports.updateController=[
             if(err){console.log(err)}
             
         });
-        logged_user.user_detail=user;
-        res.redirect("/users/"+logged_user.user_detail._id);
+        req.user_detail=user;
+        res.redirect("/users/"+req.user_detail._id);
     }
 ];
 
 exports.logoutController=(req,res)=>{
-    if(logged_user.user_logged!=2){
-        logged_user.user_detail=null;
-        logged_user.user_logged=2;
+    if(req.user_logged!=2){
+        req.user_detail=null;
+        req.user_logged=2;
         res.redirect("/users/");
     }
     else{
@@ -210,18 +222,18 @@ exports.logoutController=(req,res)=>{
 
 exports.borrowedController=(req,res)=>{
     var user_books=[];
-    if(logged_user.user_logged==1){
+    if(req.user_logged==1){
         Bookinstance.find({},"book imprint due_back").populate("book").exec((err,results)=>{
             if(err){console.log(err)}
-            for(let i=0;i<logged_user.user_detail.books_borrowed.length;i++){
+            for(let i=0;i<req.user_detail.books_borrowed.length;i++){
                 for(let j=0;j<results.length;j++){
                     
-                    if(logged_user.user_detail.books_borrowed[i]==results[j]._id.toString()){
+                    if(req.user_detail.books_borrowed[i]==results[j]._id.toString()){
                         user_books.push(results[j]);
                     }
                 }
             }
-            res.render("books_borrowed",{title:"Books Borrowed",books:user_books,user:logged_user.user_detail,user_logged:logged_user.user_logged})
+            res.render("books_borrowed",{title:"Books Borrowed",books:user_books,user:req.user_detail,user_logged:req.user_logged})
         })
     }
     else{

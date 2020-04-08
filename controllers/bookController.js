@@ -6,10 +6,8 @@ var author=require("../models/author");
 var async=require("async");
 var validator=require("express-validator");
 
-var logged_user=require("../logged_user");
-
 exports.index=function(req,res){
-    if(logged_user.user_logged!=2){
+    if(req.user_logged!=2){
         async.parallel({
             bookCount:function(callback){
                 book.countDocuments({},callback);
@@ -28,7 +26,7 @@ exports.index=function(req,res){
             }
         },
         function(err,results){
-            res.render("index",{title:"Library Home Page",errors:err,data:results,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("index",{title:"Library Home Page",errors:err,data:results,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -37,10 +35,10 @@ exports.index=function(req,res){
 };
 
 exports.book_list=function(req,res){
-    if(logged_user.user_logged!=2){
+    if(req.user_logged!=2){
         book.find({},"title author").populate("author")
         .exec(function(err,list){
-            res.render("book_list",{title:"Book List",errors:err,books:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("book_list",{title:"Book List",errors:err,books:list,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -49,7 +47,7 @@ exports.book_list=function(req,res){
 };
 
 exports.book_detail=function(req,res,next){
-    if(logged_user.user_logged!=2){
+    if(req.user_logged!=2){
         async.parallel({
             book:(callback)=>{
                 book.findById(req.params.id).populate("author").populate("genre")
@@ -66,7 +64,7 @@ exports.book_detail=function(req,res,next){
                 err.status=404;
                 return next(err);
             }
-            res.render("book_detail",{book:results.book,bookins:results.book_instance,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("book_detail",{book:results.book,bookins:results.book_instance,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -75,14 +73,14 @@ exports.book_detail=function(req,res,next){
 };
 
 exports.book_create_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             authors:(callback)=>{author.find().exec(callback)},
             genres:(callback)=>{genre.find().exec(callback)}
         },
         (errors,results)=>{
             if(errors){return next(errors);}
-            res.render("book_form",{title:"Book Form",authors:results.authors,genres:results.genres,user:logged_user.user_detail,user_logged:logged_user.user_logged});    
+            res.render("book_form",{title:"Book Form",authors:results.authors,genres:results.genres,user:req.user_detail,user_logged:req.user_logged});    
         });
     }
     else{
@@ -115,7 +113,7 @@ exports.book_create_post=[
     validator.sanitizeBody('genre.*').escape(),
 
     (req,res,next)=>{
-        if(logged_user.user_logged==0){
+        if(req.user_logged==0){
             const errors=validator.validationResult(req);
 
             var Book= new book({
@@ -142,7 +140,7 @@ exports.book_create_post=[
                             results.genres[i].checked="true";
                         }
                     }
-                    res.render("book_form",{title:"Book Form",authors:results.authors,genres:results.genres,book:Book,errors:errors.array(),user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                    res.render("book_form",{title:"Book Form",authors:results.authors,genres:results.genres,book:Book,errors:errors.array(),user:req.user_detail,user_logged:req.user_logged});
                 });
             }
             else{
@@ -160,7 +158,7 @@ exports.book_create_post=[
 ];
 
 exports.book_update_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             book:(callback)=>{
                 book.findById(req.params.id).populate("author").populate("genre").exec(callback);
@@ -181,7 +179,7 @@ exports.book_update_get=function(req,res,next){
                     }
                 }
             }
-            res.render("book_form",{title:"Book Update Form",book:results.book,authors:results.authors,genres:results.genres,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("book_form",{title:"Book Update Form",book:results.book,authors:results.authors,genres:results.genres,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -214,7 +212,7 @@ exports.book_update_post=[
     validator.sanitizeBody("genre.*").escape(),
 
     (req,res,next)=>{
-        if(logged_user.user_logged==0){
+        if(req.user_logged==0){
             const errors=validator.validationResult(req);
 
             var Book=new book({
@@ -228,7 +226,7 @@ exports.book_update_post=[
 
             if(!errors.isEmpty()){
                 author.find().exec((err,authors)=>{
-                    res.render("book_form",{title:"Book Update Form",authors:authors,book:Book,errors:errors.array(),user:logged_user.user_detail,user_logged:logged_user.user_logged})    
+                    res.render("book_form",{title:"Book Update Form",authors:authors,book:Book,errors:errors.array(),user:req.user_detail,user_logged:req.user_logged})    
                 })
             }
             else{
@@ -245,7 +243,7 @@ exports.book_update_post=[
 ]
 
 exports.book_delete_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             book:(callback)=>{
                 book.findById(req.params.id).populate("author").populate("genre").exec(callback);
@@ -259,7 +257,7 @@ exports.book_delete_get=function(req,res,next){
             if(results.book==null){
                 res.redirect("/catalog/books")  //if someone changes link manually in address bar
             }
-            res.render("book_delete",{title:"Book Delete Page",book:results.book,bookinstances:results.bookinstances,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("book_delete",{title:"Book Delete Page",book:results.book,bookinstances:results.bookinstances,user:req.user_detail,user_logged:req.user_logged});
         })
     }
     else{
@@ -268,7 +266,7 @@ exports.book_delete_get=function(req,res,next){
 };
 
 exports.book_delete_post=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             book:(callback)=>{
                 book.findById(req.params.bid).exec(callback);
@@ -280,7 +278,7 @@ exports.book_delete_post=function(req,res,next){
         (err,results)=>{
             if(err){return next(err);}
             if(results.bookinstances.length>0){
-                res.render("book_delete",{title:"Book Delete Page",book:results.book,bookinstances:results.bookinstances,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                res.render("book_delete",{title:"Book Delete Page",book:results.book,bookinstances:results.bookinstances,user:req.user_detail,user_logged:req.user_logged});
             }
             else{
                 book.findByIdAndRemove(req.body.bid).exec((err)=>{

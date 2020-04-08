@@ -4,13 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose= require("mongoose");
-var bodyParser=require("body-parser");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var catalogRouter= require("./routes/catalog");
-
-var logged_user=require("./logged_user");
 
 var compression=require("compression");
 var helmet=require("helmet");
@@ -18,7 +15,7 @@ var helmet=require("helmet");
 var app = express();
 var dev_db_URl='mongodb+srv://sanjay:1Sanjay@@cluster0-1naxh.mongodb.net/test?retryWrites=true&w=majority';
 var mongoDB=process.env.MONGODB_URI || dev_db_URl;
-mongoose.connect(mongoDB,{useNewUrlParser:true});
+mongoose.connect(mongoDB,{useNewUrlParser:true, useUnifiedTopology: true });
 var db=mongoose.connection;
 db.on("error",console.error.bind(console,"Mongo Database Error:"));
 
@@ -38,7 +35,7 @@ app.use("/catalog",catalogRouter);
 
 app.use(compression());
 app.use(helmet());
-app.use(bodyParser.json());
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

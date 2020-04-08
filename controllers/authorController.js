@@ -3,10 +3,8 @@ var book=require("../models/book");
 var async=require("async");
 var validator=require("express-validator");
 
-var logged_user=require("../logged_user");
-
 exports.author_detail=function(req,res){
-    if(logged_user.user_logged!=2){
+    if(req.user_logged!=2){
         async.parallel({
             author_detail:(callback)=>{
                 author.findById(req.params.id).sort([["name","ascending"]]).exec(callback);
@@ -22,7 +20,7 @@ exports.author_detail=function(req,res){
                 err.status=404;
                 return next(err);
             }
-            res.render("author_detail",{author:results.author_detail,books:results.books,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("author_detail",{author:results.author_detail,books:results.books,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -31,10 +29,10 @@ exports.author_detail=function(req,res){
 };
 
 exports.author_list=function(req,res){
-    if(logged_user.user_logged!=2){
+    if(req.user_logged!=2){
         author.find().sort([["family_name","Ascending"]])
         .exec((err,list)=>{
-            res.render("author_list",{title:"Author List Page",errors:err,authors:list,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("author_list",{title:"Author List Page",errors:err,authors:list,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -43,8 +41,8 @@ exports.author_list=function(req,res){
 };
 
 exports.author_create_get=function(req,res){
-    if(logged_user.user_logged==0){
-        res.render("author_form",{"title":"Author Form",user:logged_user.user_detail,user_logged:logged_user.user_logged});
+    if(req.user_logged==0){
+        res.render("author_form",{"title":"Author Form",user:req.user_detail,user_logged:req.user_logged});
     }
     else{
         res.redirect("/users/")
@@ -64,11 +62,11 @@ exports.author_create_post=[
     validator.sanitizeBody("date_of_death").escape(),
 
     function(req,res,next){
-        if(logged_user.user_logged==0){
+        if(req.user_logged==0){
             var errors=validator.validationResult(req);
 
             if(!errors.isEmpty()){
-                res.render("author_form",{title:"Author Form",errors:errors.array(),author:req.body,err:1,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                res.render("author_form",{title:"Author Form",errors:errors.array(),author:req.body,err:1,user:req.user_detail,user_logged:req.user_logged});
             }
             else{
                 author.findOne({first_name:req.body.first_name}).exec((err,result)=>{
@@ -100,7 +98,7 @@ exports.author_create_post=[
 ];
 
 exports.author_delete_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             author:(callback)=>{
                 author.findById(req.params.id).exec(callback);
@@ -115,7 +113,7 @@ exports.author_delete_get=function(req,res,next){
                 res.redirect("/catalog/authors");
             }
             //else not used as if null the redirected to given url and not go to next line
-            res.render("author_delete",{title:"Author Delete Form",author:results.author,books:results.books,user:logged_user.user_detail,user_logged:logged_user.user_logged})
+            res.render("author_delete",{title:"Author Delete Form",author:results.author,books:results.books,user:req.user_detail,user_logged:req.user_logged})
             
         })
     }
@@ -125,7 +123,7 @@ exports.author_delete_get=function(req,res,next){
 };
 
 exports.author_delete_post=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         async.parallel({
             author:(callback)=>{
                 author.findById(req.body.aid).exec(callback);
@@ -137,7 +135,7 @@ exports.author_delete_post=function(req,res,next){
         (err,results)=>{
             if(err){return next(err);}
             if(results.books.length>0){
-                res.render("author_delete",{title:"Author Delete Form",author:results.author,books:results.books,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                res.render("author_delete",{title:"Author Delete Form",author:results.author,books:results.books,user:req.user_detail,user_logged:req.user_logged});
             }
             else{
                 author.findByIdAndRemove(req.body.aid).exec((err)=>{
@@ -153,10 +151,10 @@ exports.author_delete_post=function(req,res,next){
 };
 
 exports.author_update_get=function(req,res,next){
-    if(logged_user.user_logged==0){
+    if(req.user_logged==0){
         author.findById(req.params.id).exec((err,detail)=>{
             if(err){return next(err);}
-            res.render("author_form",{title:"Author Update Form",author:detail,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+            res.render("author_form",{title:"Author Update Form",author:detail,user:req.user_detail,user_logged:req.user_logged});
         });
     }
     else{
@@ -176,7 +174,7 @@ exports.author_update_post=[
     validator.sanitizeBody("date_of_death").toDate(),
 
     (req,res,next)=>{
-        if(logged_user.user_logged==0){
+        if(req.user_logged==0){
             const errors=validator.validationResult(req);
 
             var Author=new author({
@@ -188,7 +186,7 @@ exports.author_update_post=[
             });
 
             if(!errors.isEmpty()){
-                res.render("author_form",{title:"Author Update Form",author:Author,errors:errors.array(),err:1,user:logged_user.user_detail,user_logged:logged_user.user_logged});
+                res.render("author_form",{title:"Author Update Form",author:Author,errors:errors.array(),err:1,user:req.user_detail,user_logged:req.user_logged});
             }
             else{
                 author.findByIdAndUpdate(req.params.id,Author,{}).exec((err,author_detail)=>{
